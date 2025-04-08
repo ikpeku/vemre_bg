@@ -118,7 +118,7 @@ export const userNotifications = async (req: IRequest, res: Response, next: Next
 export const createTransaction = async (req: IRequest, res: Response, next: NextFunction) => {
     const {
          amount,
-        category,
+        // category,
         description,
     } = req.body
    
@@ -155,9 +155,23 @@ export const userTransaction = async (req: IRequest, res: Response, next: NextFu
     try {
       if(!req.payload) return errorHandler(res, 500,"user not login in" );
 
-     const data =  await Transaction.find({user:req?.payload.userId});
+     const data =  await Transaction.find({user:req?.payload.userId}).populate("user", "fullname").sort("-updatedAt");
 
       res.status(200).json({data});
+  
+      } catch (error:any) {
+          next(error)
+      }
+  }
+  
+export const deleteTransaction = async (req: IRequest, res: Response, next: NextFunction) => {
+    const { txndId } = req.params;
+   
+    try {
+      if(!req.payload) return errorHandler(res, 500,"user not login in" );
+         await Transaction.deleteOne({user:req?.payload.userId, _id: txndId });
+
+      res.status(200).json({message: "success"});
   
       } catch (error:any) {
           next(error)

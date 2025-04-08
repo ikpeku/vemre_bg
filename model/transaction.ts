@@ -27,7 +27,7 @@ const TransactionSchema = new Schema<ITransactionSchema>(
         type: Boolean,
         default: true,
       },
-      // title: String,
+      type: String,
       transactionLink: String,
       description: String,
       transactionReference: String,

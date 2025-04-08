@@ -1,8 +1,8 @@
 import express from "express"
-import { updateUser,  userNotifications,  userTransaction, createTransaction, others} from "../controller/user";
+import { updateUser,  userNotifications,  userTransaction, createTransaction, others, deleteTransaction} from "../controller/user";
 import { onlyLoginUser } from "../utils/helper";
 
-import { multipleupload, singleupload } from "../middleware/multer";
+import { singleupload } from "../middleware/multer";
 
 const userroute = express.Router();
 
@@ -15,5 +15,6 @@ userroute.get("/notify", onlyLoginUser, singleupload, userNotifications);
 // transaction
 userroute.post("/createtransaction", onlyLoginUser, createTransaction);
 userroute.get("/alltransactions", onlyLoginUser, userTransaction);
+userroute.delete("/deletetransaction/:txndId", onlyLoginUser, deleteTransaction);
 
 export default userroute;
