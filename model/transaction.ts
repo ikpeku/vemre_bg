@@ -10,6 +10,8 @@ interface ITransactionSchema {
   description?: string;
   transactionReference?: string;
   senderName?: string;
+  senderEmail?: string;
+  senderPhoneNumber?: string;
   amount?: number;
   category?: string;
   transactionLink?: string
@@ -32,6 +34,8 @@ const TransactionSchema = new Schema<ITransactionSchema>(
       description: String,
       transactionReference: String,
       senderName: String,
+      senderEmail: String,
+      senderPhoneNumber: String,
       amount: Number,
       category: String,
   },

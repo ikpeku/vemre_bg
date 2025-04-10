@@ -42,6 +42,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 
 }
 
+
+
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
     const {
         email,
@@ -60,6 +62,44 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 
 
         if (!isEqual) return errorHandler(res, 500, "Invalid credential")
+
+            await PasswordReset.deleteMany({user: user._id});
+
+            await responseResult({res, userId: user._id})
+       
+
+    } catch (error: any) {
+        next(error)
+    }
+
+}
+
+
+export const loginAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    const {
+        email,
+        password
+    } = req.body
+
+
+    try {
+
+        const user = await User.findOne({ email: email?.toLowerCase() });
+
+        if (!user) return errorHandler(res, 500, " Not a register user.")
+
+
+        if (user.account_type === "User") return errorHandler(res, 401, "Not authorise, contact admin")
+
+        
+
+
+        const isEqual = await bcrypt.compare(password, user.password);
+
+
+        if (!isEqual) return errorHandler(res, 500, "Invalid credential");
+
+
 
             await PasswordReset.deleteMany({user: user._id});
 

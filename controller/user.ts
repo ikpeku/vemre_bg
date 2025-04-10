@@ -120,6 +120,9 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
          amount,
         // category,
         description,
+        senderName,
+        senderEmail,
+        senderPhoneNumber,
     } = req.body
    
     try {
@@ -128,12 +131,14 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
      const data =  new Transaction({
         user: req?.payload.userId,
         amount,
-        // category,
         description,
         transactionReference: Math.random() * Math.random() * 3000,
-        senderName: "Ken Simon" + Math.floor(Math.random() * 1000),
         type: "Received",
-        transactionLink: "stripe.com"
+        transactionLink: "stripe.com",
+        // category,
+        senderName,
+        senderEmail,
+        senderPhoneNumber
       });
 
       data.save();
@@ -162,7 +167,24 @@ export const userTransaction = async (req: IRequest, res: Response, next: NextFu
       } catch (error:any) {
           next(error)
       }
-  }
+  };
+
+// transaction
+export const AllUsersTransactions = async (req: IRequest, res: Response, next: NextFunction) => {
+   
+    try {
+      if(!req.payload) return errorHandler(res, 500,"user not login in" );
+
+     const data =  await Transaction.find().populate("user", "fullname").sort("-updatedAt");
+
+      res.status(200).json({data});
+  
+      } catch (error:any) {
+          next(error)
+      }
+  };
+
+
   
 export const deleteTransaction = async (req: IRequest, res: Response, next: NextFunction) => {
     const { txndId } = req.params;
