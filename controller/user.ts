@@ -133,6 +133,13 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
     try {
       if(!req.payload) return errorHandler(res, 500,"user not login in" );
 
+      if(amount && description && senderEmail && senderName &&  senderPhoneNumber){
+      } else {
+        return errorHandler(res, 500,"failed" );
+      }
+
+
+
     //   console.log({body: req.body})
 
     const unit_amount =  parseFloat(amount) * 100;
