@@ -29,12 +29,16 @@ const TransactionSchema = new Schema<ITransactionSchema>(
         type: Boolean,
         default: true,
       },
+      senderEmail: {
+        type: String,
+        required: [true, 'Please add the user email address'],
+        lowercase: true
+      },
       type: String,
       transactionLink: String,
       description: String,
       transactionReference: String,
       senderName: String,
-      senderEmail: String,
       senderPhoneNumber: String,
       amount: Number,
       category: String,

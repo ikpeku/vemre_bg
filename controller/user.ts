@@ -6,6 +6,11 @@ import { responseResult } from "../utils/response";
 import { Notification, Transaction} from '../model';
 import { processImage } from "../utils/cloudinaryPhoto";
 
+import Stripe from "stripe"
+
+
+const stripe = new Stripe(process.env.Secret_Key!);
+
 
 export const updateUser = async (req: IRequest, res: Response, next: NextFunction) => {
     const {
@@ -123,18 +128,51 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
         senderName,
         senderEmail,
         senderPhoneNumber,
-    } = req.body
+    } = req.body;
    
     try {
       if(!req.payload) return errorHandler(res, 500,"user not login in" );
+
+    //   console.log({body: req.body})
+
+    const unit_amount =  parseFloat(amount) * 100;
+
+
+      const product = await stripe.products.create({
+        name: "Pay with Vemre",
+        description
+      });
+
+
+      if(!product) return errorHandler(res, 500,"failed" );
+
+        const price = await stripe.prices.create({
+        currency: 'usd',
+        unit_amount,
+        product: product.id,
+        });
+
+if(!price) return errorHandler(res, 500,"failed" );
+
+const paymentLink = await stripe.paymentLinks.create({
+    line_items: [
+      {
+        price: price.id,
+        quantity: 1,
+      },
+    ],
+  });
+
+
+if(!paymentLink) return errorHandler(res, 500,"failed" );
 
      const data =  new Transaction({
         user: req?.payload.userId,
         amount,
         description,
-        transactionReference: Math.random() * Math.random() * 3000,
+        transactionReference: paymentLink.id,
         type: "Received",
-        transactionLink: "stripe.com",
+        transactionLink: paymentLink.url,
         // category,
         senderName,
         senderEmail,
@@ -146,7 +184,8 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
      
       if(!data) return errorHandler(res, 500,"failed" );
 
-      res.status(200).json({message: "success", data});
+      res.status(200).json({message: "success", data });
+
   
       } catch (error:any) {
           next(error)
@@ -191,6 +230,21 @@ export const deleteTransaction = async (req: IRequest, res: Response, next: Next
    
     try {
       if(!req.payload) return errorHandler(res, 500,"user not login in" );
+
+      const txn =  await Transaction.findOne({user:req?.payload.userId, _id: txndId });
+
+      if(!txn) return errorHandler(res, 500,"failed" );
+
+
+
+      const paymentLink = await stripe.paymentLinks.update(txn.transactionReference!,
+        {
+          active: false
+        }
+      );
+
+      if(!paymentLink) return errorHandler(res, 500,"failed" );
+
          await Transaction.deleteOne({user:req?.payload.userId, _id: txndId });
 
       res.status(200).json({message: "success"});

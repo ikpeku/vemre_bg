@@ -12,6 +12,7 @@ import userroute from "./routes/user";
 import { getCurrentUser } from "./utils/bearerToken";
 
 import { IRequest } from "./types";
+import stripeRoute from "./routes/stripe";
 
 const app: Express = express();
 
@@ -45,8 +46,9 @@ cloudinary.config({
 })
 
 
-app.use("/api/auth", authroute)
-app.use("/api/user", userroute)
+app.use("/api/auth", authroute);
+app.use("/api/user", userroute);
+app.use("/api/stripe", stripeRoute);
 
 
 // suspend account
