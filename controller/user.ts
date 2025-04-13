@@ -106,7 +106,7 @@ export const userNotifications = async (req: IRequest, res: Response, next: Next
    
     try {
       if(!req.payload) return errorHandler(res, 500,"user not login in" );
-      const data = await Notification.find({user: req?.payload.userId}).sort("-createdAt")
+      const data = await Notification.find({user: req?.payload.userId}).sort("-createdAt");   
   
       res.status(200).json({data})
   
@@ -115,8 +115,6 @@ export const userNotifications = async (req: IRequest, res: Response, next: Next
       }
   
   }
-  
-
 
 
 // transaction
@@ -137,10 +135,6 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
       } else {
         return errorHandler(res, 500,"failed" );
       }
-
-
-
-    //   console.log({body: req.body})
 
     const unit_amount =  parseFloat(amount) * 100;
 
@@ -168,10 +162,26 @@ const paymentLink = await stripe.paymentLinks.create({
         quantity: 1,
       },
     ],
+    
   });
 
 
 if(!paymentLink) return errorHandler(res, 500,"failed" );
+
+
+const paymentLinUpdate = await stripe.paymentLinks.update(paymentLink.id!,
+    {
+        payment_intent_data: {
+      metadata: {
+        transactionReference: paymentLink.id,
+      }
+    }
+    }
+  );
+
+  if(!paymentLinUpdate) return errorHandler(res, 500,"failed" );
+
+//   console.log({paymentLinUpdate})
 
      const data =  new Transaction({
         user: req?.payload.userId,
@@ -190,6 +200,7 @@ if(!paymentLink) return errorHandler(res, 500,"failed" );
 
      
       if(!data) return errorHandler(res, 500,"failed" );
+
 
       res.status(200).json({message: "success", data });
 

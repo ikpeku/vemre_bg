@@ -49,7 +49,6 @@ const TransactionSchema = new Schema<ITransactionSchema>(
 );
 
 
-
 TransactionSchema.plugin(aggregatePaginate);
 
 const Transaction = model<ITransactionSchema>('transaction', TransactionSchema);
