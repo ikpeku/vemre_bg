@@ -5,10 +5,10 @@ import { errorHandler } from "../utils/errorHandler";
 import bcrypt from "bcryptjs"
 import { IRequest } from "../types";
 import { responseResult } from "../utils/response";
-import { PasswordReset } from "../model";
+import { Notification, PasswordReset } from "../model";
 
 import crypto from "crypto"
-import { sendMail } from "../utils/mailer";
+import { sendMail, sendNotification } from "../utils/mailer";
 
 
 
@@ -32,6 +32,12 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
         const user = await User.create({email, password: hashedPassword});
 
         if (!user) return errorHandler(res, 500, "registration failed.")
+        
+             let message = `Welcome to Vemre.`
+            
+             await Notification.create({user: user._id, message });
+            
+            sendNotification({email, message})
             
         await responseResult({res, userId: user._id})
         
@@ -166,6 +172,12 @@ export const changeUserPassword = async (req: IRequest, res: Response, next: Nex
         user.password = hashedPassword;
 
         user.save();
+
+        let message = `Hello ${user.fullname ? "user.fullname" : "user"}, your password was recently changed.`
+            
+        await Notification.create({user: user._id, message });
+       
+       sendNotification({email: user.email, message});
 
         res.status(200).json({message: "successfull"});
 

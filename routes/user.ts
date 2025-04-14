@@ -1,5 +1,5 @@
 import express from "express"
-import { updateUser,  userNotifications,  userTransaction, createTransaction, others, deleteTransaction, AllUsersTransactions} from "../controller/user";
+import { updateUser,  userNotifications,  userTransaction, createTransaction, others, deleteTransaction, AllUsersTransactions, userReadNotifications} from "../controller/user";
 import { onlyAdminUser, onlyLoginUser } from "../utils/helper";
 
 import { singleupload } from "../middleware/multer";
@@ -10,7 +10,8 @@ userroute.patch("/update", onlyLoginUser, singleupload, updateUser);
 userroute.post("/other", onlyLoginUser, singleupload, others);
 
 
-userroute.get("/notify", onlyLoginUser, singleupload, userNotifications);
+userroute.get("/notify", onlyLoginUser, userNotifications);
+userroute.post("/readnotify", onlyLoginUser, userReadNotifications);
 
 // transaction
 userroute.post("/createtransaction", onlyLoginUser, createTransaction);

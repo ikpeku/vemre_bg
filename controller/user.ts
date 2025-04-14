@@ -114,6 +114,30 @@ export const userNotifications = async (req: IRequest, res: Response, next: Next
           next(error)
       }
   
+  };
+
+
+export const userReadNotifications = async (req: IRequest, res: Response, next: NextFunction) => {
+   
+    try {
+      if(!req.payload) return errorHandler(res, 500,"user not login in" );
+      const data = await Notification.find({user: req?.payload.userId}).sort("-createdAt");   
+
+      data.forEach((item) => {
+        item.isReaded = true;
+
+        item.save();
+
+      });
+
+      
+  
+      res.status(200).json({message: "success"});
+  
+      } catch (error:any) {
+          next(error)
+      }
+  
   }
 
 
