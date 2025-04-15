@@ -31,12 +31,15 @@ const PORT = process.env.PORT || 5000;
 //// DATABASE URL local: process.env.MONGODB_URI ||| cloud:process.env.databaseUrl
 const dbUrl = process.env.databaseUrl || process.env.MONGODB_URI;
 
+app.use(getCurrentUser)
+
+app.use("/api/stripe", bodyParser.raw({ type: 'application/json' }), stripeRoute);
+
 // create application/json parser
 app.use(bodyParser.json({ limit: "200mb" }));
 app.use(bodyParser.urlencoded({ limit: "200mb",  extended: true, parameterLimit: 1000000 }));
 
 
-app.use(getCurrentUser)
 
 // cloudinary
 cloudinary.config({
@@ -48,7 +51,8 @@ cloudinary.config({
 
 app.use("/api/auth", authroute);
 app.use("/api/user", userroute);
-app.use("/api/stripe", stripeRoute);
+
+
 
 
 // suspend account

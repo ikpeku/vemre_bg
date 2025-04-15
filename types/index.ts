@@ -1,5 +1,5 @@
 import { Request } from "express"
-
+import { Types} from "mongoose";
 export interface IuserSchema {
   avatar: string,
   email: string,
@@ -28,4 +28,11 @@ export interface IRequest extends Request {
     userId: string,
     status: 'User' | "Admin",
   }
+}
+
+
+export type Transfer = {
+  userId: Types.ObjectId,
+  amount: number, 
+  recipientCode: string
 }

@@ -155,7 +155,7 @@ export const createTransaction = async (req: IRequest, res: Response, next: Next
     try {
       if(!req.payload) return errorHandler(res, 500,"user not login in" );
 
-      if(amount && description && senderEmail && senderName &&  senderPhoneNumber){
+      if(amount && description  && senderName ){
       } else {
         return errorHandler(res, 500,"failed" );
       }
@@ -207,7 +207,7 @@ const paymentLinUpdate = await stripe.paymentLinks.update(paymentLink.id!,
 
 //   console.log({paymentLinUpdate})
 
-     const data =  new Transaction({
+     const data =  await Transaction.create({
         user: req?.payload.userId,
         amount,
         description,
@@ -219,9 +219,6 @@ const paymentLinUpdate = await stripe.paymentLinks.update(paymentLink.id!,
         senderEmail,
         senderPhoneNumber
       });
-
-      data.save();
-
      
       if(!data) return errorHandler(res, 500,"failed" );
 

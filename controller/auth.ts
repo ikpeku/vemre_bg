@@ -152,10 +152,9 @@ export const changeUserPassword = async (req: IRequest, res: Response, next: Nex
     const {
         password,
         code
-    } = req.body
+    } = req.body;
 
    
-
     try {
 
        const isPasswordRequest = await PasswordReset.findOne({token: code});

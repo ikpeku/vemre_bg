@@ -68,11 +68,11 @@ img {-ms-interpolation-mode: bicubic;}
 }
 
 
-export const sendNotification = ({ message, email}:{ message:string, email:string}) => {
+export const sendNotification = ({ message, email, subject = "Vemre Notification"}:{ message:string, email:string, subject?: string}) => {
     const msg = {
         to: email, // Change to your recipient
         from: 'ikpedaniel07@gmail.com', // Change to your verified sender
-        subject: 'Vemre Password Code',
+        subject,
         html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html data-editor-version="2" class="sg-campaigns" xmlns="http://www.w3.org/1999/xhtml">
 
@@ -111,7 +111,7 @@ img {-ms-interpolation-mode: bicubic;}
 <body>
 <center class="wrapper" data-link-color="#1188E6"
     data-body-style="font-size:14px; font-family:inherit; color:#000000; background-color:#f0f0f0;">
-    <h1>${message}</h1>
+    <p>${message}</p>
    
 </center>
 </body>

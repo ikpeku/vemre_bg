@@ -31,7 +31,6 @@ const TransactionSchema = new Schema<ITransactionSchema>(
       },
       senderEmail: {
         type: String,
-        required: [true, 'Please add the user email address'],
         lowercase: true
       },
       type: String,

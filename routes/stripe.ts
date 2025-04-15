@@ -1,10 +1,11 @@
 import express from "express"
 import { Request, Response, NextFunction } from 'express';
 const stripeRoute = express.Router();
-// import { onlyAdminUser, onlyLoginUser } from "../utils/helper";
 import Stripe from "stripe"
-import { Notification, Transaction } from "../model";
+import { Notification, Transaction , } from "../model";
 import { sendNotification } from "../utils/mailer";
+import User from "../model/user"
+import { formatInky } from "../utils/curreency";
 
 const stripe = new Stripe(process.env.Secret_Key!);
 
@@ -12,31 +13,30 @@ const endpointSecret = process.env.endpointSecret!;
 
 // stripe trigger payment_intent.succeeded
 
-stripeRoute.post("/webhook", express.raw({ type: 'application/json' }), async (req: Request, res: Response, next: NextFunction) => {
-    const event = req.body;
+stripeRoute.post("/webhook", async (req: Request, res: Response, next: NextFunction) => {
+    // const event = req.body;
 
-    // console.log("ennnnnnnterrr")
+    const sig = req.headers['stripe-signature'];
 
-    // const sig = req.headers['stripe-signature'];
+    if(!sig) {
+      console.log("no sig")
+      return
+    }
 
-    // console.log({sig})
+    let event;
 
-    // let event;
-    // // console.log("event1: ", {event})
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    }
+    catch (err:any) {
+     return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
   
-    // try {
-    //   event = stripe.webhooks.constructEvent(req.body, sig!, endpointSecret);
-    //   console.log("event2: ", {event})
-    // }
-    // catch (err:any) {
-    //  return res.status(400).send(`Webhook Error: ${err.message}`);
-    // }
-
-
     // console.log("event3: ", {event, data: event?.data})
 
     // Handle the event
     switch (event.type) {
+
       case 'payment_intent.succeeded':
         const paymentIntent = event.data.object;
         const metadata = paymentIntent.metadata;
@@ -57,11 +57,40 @@ stripeRoute.post("/webhook", express.raw({ type: 'application/json' }), async (r
             }
           );
 
-          let message = `Your account has been credited with $${txn.amount} from  ${txn.senderName}.`
+          let message = `Your account has been credited with ${formatInky((txn.amount!).toString())} from  ${txn.senderName}.`
+
+         const user = await User.findById(txn.user);
 
         await Notification.create({user: txn.user, message });
 
-        sendNotification({email: txn.senderEmail!, message})
+        sendNotification({email: user?.email!, message});
+       
+
+        // commission
+
+          let commissionmessage = `Your account has been debited with ${formatInky((txn.amount! * 0.2).toString())  } as stamp duty on electronic funds transfer.`
+
+        const data =  new Transaction({
+                user: txn.user,
+                amount: txn.amount! * 0.2,
+                description: "Stamp Duty On Electronic Funds Transfer",
+                transactionReference: txn.transactionReference,
+                type: "Withdraw",
+                transactionLink: txn.transactionLink,
+                isPending: false,
+                senderName: "Vemre Stamp Duty",
+                senderEmail: "",
+                senderPhoneNumber: ""
+              });
+        
+              data.save();
+
+
+              await Notification.create({user: txn.user, message:commissionmessage });
+
+              sendNotification({email: user?.email!, message: commissionmessage});
+              
+
 
         break;
   
