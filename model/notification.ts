@@ -30,15 +30,6 @@ const notificationSchema = new Schema<InotificationSchema>(
 );
 
 
-// notificationSchema.post('find', function(doc, next) {
-
-//   doc.isReaded = true
-//   doc.save()
-
-//   next();
-// });
-
-
 notificationSchema.plugin(aggregatePaginate);
 
 const Notification = model<InotificationSchema>('Notification', notificationSchema);

@@ -13,6 +13,7 @@ import { getCurrentUser } from "./utils/bearerToken";
 
 import { IRequest } from "./types";
 import stripeRoute from "./routes/stripe";
+import paystackroute from "./routes/paystackpayout";
 
 const app: Express = express();
 
@@ -51,6 +52,7 @@ cloudinary.config({
 
 app.use("/api/auth", authroute);
 app.use("/api/user", userroute);
+app.use("/api/paystack", paystackroute);
 
 
 

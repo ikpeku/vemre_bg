@@ -14,8 +14,21 @@ interface ITransactionSchema {
   senderPhoneNumber?: string;
   amount?: number;
   category?: string;
-  transactionLink?: string
+  transactionLink?: string;
+
+  recipientName?: string;
+  account_number?: string;
+  bank_code?: string;
+  currency?: string;
+  paystacktype?: "nuban"
+
 }
+
+
+// name: "Tolu Robert",
+//   account_number: "01000000010",
+//   bank_code: "058",
+  // currency: "NGN"
 
 
 const TransactionSchema = new Schema<ITransactionSchema>(
@@ -33,7 +46,11 @@ const TransactionSchema = new Schema<ITransactionSchema>(
         type: String,
         lowercase: true
       },
-      type: String,
+      type: {
+        type: String,
+        default: "Received",
+        enum: ["Received" , "Withdraw"]
+      },
       transactionLink: String,
       description: String,
       transactionReference: String,
@@ -41,6 +58,18 @@ const TransactionSchema = new Schema<ITransactionSchema>(
       senderPhoneNumber: String,
       amount: Number,
       category: String,
+      account_number: String,
+      bank_code: String,
+      recipientName: String,
+      currency: {
+        type: String,
+        default: "USD"
+      },
+      paystacktype: {
+        type: String,
+        default: "nuban"
+      },
+
   },
   {
     timestamps: true,

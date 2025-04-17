@@ -231,6 +231,49 @@ const paymentLinUpdate = await stripe.paymentLinks.update(paymentLink.id!,
       }
   }
   
+// withdrawal
+export const createWithdrawal = async (req: IRequest, res: Response, next: NextFunction) => {
+    const {
+         amount,
+         recipientName,
+        account_number,
+        bank_code,
+        currency,
+        type
+    } = req.body;
+   
+    try {
+      if(!req.payload) return errorHandler(res, 500,"user not login in" );
+
+      if(amount  ){
+      } else {
+        return errorHandler(res, 500,"failed" );
+      }
+
+
+      const data =  await Transaction.create({
+        user: req?.payload.userId,
+        amount,
+        description: "withdrawal",
+        type: "Withdraw",
+        recipientName,
+        account_number,
+        bank_code,
+        currency,
+        paystacktype: type
+      });
+     
+      if(!data) return errorHandler(res, 500,"failed" );
+
+
+      res.status(200).json({message: "success" });
+
+  
+      } catch (error:any) {
+          next(error)
+      }
+  }
+  
 
 // transaction
 export const userTransaction = async (req: IRequest, res: Response, next: NextFunction) => {
