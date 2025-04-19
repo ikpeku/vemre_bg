@@ -9,6 +9,7 @@ import { Notification, PasswordReset } from "../model";
 
 import crypto from "crypto"
 import { sendMail, sendNotification } from "../utils/mailer";
+import { isSubscriptionExpiredToday } from "../utils/checkPlanExpire";
 
 
 
@@ -70,6 +71,15 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
         if (!isEqual) return errorHandler(res, 500, "Invalid credential")
 
             await PasswordReset.deleteMany({user: user._id});
+
+         
+            
+              if(user?.subscribeAt && isSubscriptionExpiredToday({account_status: user?.account_status, startDate: user?.subscribeAt })){
+            
+                user.account_status = "Basic"
+                user.save()
+              }
+            
 
             await responseResult({res, userId: user._id})
        
