@@ -59,7 +59,7 @@ img {-ms-interpolation-mode: bicubic;}
       sgMail
         .send(msg)
         .then(() => {
-          console.log('Email sent')
+          // console.log('Email sent')
         })
         .catch((error: any) => {
           console.log(error)
@@ -123,7 +123,7 @@ img {-ms-interpolation-mode: bicubic;}
       sgMail
         .send(msg)
         .then(() => {
-          console.log('Email sent')
+          // console.log('Email sent')
         })
         .catch((error: any) => {
           console.log(error)

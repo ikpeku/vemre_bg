@@ -327,7 +327,7 @@ export const createWithdrawal = async (req: IRequest, res: Response, next: NextF
 
     if (!data) return errorHandler(res, 500, "failed");
 
-    let message = `You have make a withdrawal request of ${formatInky((amount).toString())}. Kindly ignore the message if you requested or report to vemre if not.`
+    let message =  `You have made a withdrawal request of ${formatInky((amount).toString())}. Kindly ignore this message if you initiated the request, or report it to Vemre if you did not.`
 
     const user = await User.findById(req?.payload.userId);
 
