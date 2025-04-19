@@ -1,5 +1,5 @@
 import express from "express"
-import { updateUser,  userNotifications,  userTransaction, createTransaction, others, deleteTransaction, AllUsersTransactions, userReadNotifications, createWithdrawal} from "../controller/user";
+import { updateUser,  userNotifications,  userTransaction, createTransaction, others, deleteTransaction, AllUsersTransactions, userReadNotifications, createWithdrawal, updateUserPlan} from "../controller/user";
 import { onlyAdminUser, onlyLoginUser } from "../utils/helper";
 
 import { singleupload } from "../middleware/multer";
@@ -9,6 +9,7 @@ const userroute = express.Router();
 
 userroute.patch("/update", onlyLoginUser, singleupload, updateUser);
 userroute.post("/other", onlyLoginUser, singleupload, others);
+userroute.post("/subscribe", onlyLoginUser, updateUserPlan);
 
 
 userroute.get("/notify", onlyLoginUser, userNotifications);

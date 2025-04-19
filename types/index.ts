@@ -2,6 +2,8 @@ import { Request } from "express"
 import { Types} from "mongoose";
 export interface IuserSchema {
   avatar: string,
+  account_status: "Basic" | "Platinum" | "Gold",
+  subscribeAt: Date,
   email: string,
   password: string,
   fullname: string,

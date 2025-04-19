@@ -78,7 +78,7 @@ stripeRoute.post("/webhook", async (req: Request, res: Response, next: NextFunct
                 type: "Withdraw",
                 transactionLink: txn.transactionLink,
                 isPending: false,
-                senderName: "Vemre Stamp Duty",
+                recipientName: "Vemre Stamp Duty",
                 senderEmail: "",
                 senderPhoneNumber: ""
               });
