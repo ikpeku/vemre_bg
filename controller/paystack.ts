@@ -8,6 +8,10 @@ import { Notification, Transaction } from '../model';
 import { formatInky } from '../utils/curreency';
 import { sendNotification } from '../utils/mailer';
 import User from "../model/user";
+// const crypto = require('crypto');
+import crypto from "crypto";
+
+const secret = process.env.PayStack_Secret_Key;
 
 export const listBanks = async (req: IRequest, res: Response, next: NextFunction) => {
 
@@ -58,17 +62,14 @@ export const sendMoney = async (req: IRequest, res: Response, next: NextFunction
 
     try {
 
-
         // Notification,  
 
         const response = await Transaction.findById(txnId);
-
 
         if(!response){
            return errorHandler(res, 500,"invalid transaction" );
         }
 
-         const user = await User.findById(response.user);
 
          /**
          *  Create Transfer Recipient
@@ -121,10 +122,6 @@ export const sendMoney = async (req: IRequest, res: Response, next: NextFunction
         return errorHandler(res, 500,"failed" );
       }
 
-       let message = `Your account has been debited with ${formatInky((response.amount!).toString())} withdrawal awas successfully.`
-
-      await Notification.create({user: response.user, message});
-       sendNotification({email: user?.email!, message});
 
         res.status(200).json({message: "success"});
 
@@ -136,6 +133,56 @@ export const sendMoney = async (req: IRequest, res: Response, next: NextFunction
 
 }
 
+
+
+
+export const paystackwebhook = async (req: IRequest, res: Response, next: NextFunction) => {
+    const {txnId} = req.body; 
+
+    try {
+
+
+        const hash = crypto.createHmac('sha512', secret!).update(JSON.stringify(req.body)).digest('hex');
+        if (hash == req.headers['x-paystack-signature']) {
+        // Retrieve the request's body
+        const event = req.body;
+        // Do something with event  
+
+        if(event !== "transfer.success") return
+
+
+        const response = await Transaction.findById(txnId);
+
+        if(!response){
+           return errorHandler(res, 500,"invalid transaction" );
+        }
+
+        response.isPending = false
+        response.save();
+
+         const user = await User.findById(response.user);
+
+        let message = `Your account has been debited with ${formatInky((response.amount!).toString())} withdrawal awas successfully.`
+
+        await Notification.create({user: response.user, message});
+         sendNotification({email: user?.email!, message});
+  
+         res.send(200);
+
+
+
+        }
+     
+
+
+
+       
+        
+    } catch (error) {
+        
+    }
+
+}
 
 
 

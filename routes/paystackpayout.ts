@@ -1,6 +1,6 @@
 
 import express from "express"
-import { onlyAdminUser, onlyLoginUser } from "../utils/helper";
+import { onlyLoginUser } from "../utils/helper";
 
 import { listBanks, resolveAccountNumber } from "../controller/paystack";
 
