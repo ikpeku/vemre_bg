@@ -18,7 +18,7 @@ import paystackroute from "./routes/paystackpayout";
 const app: Express = express();
 
 var corsOptions = {
-    origin: ['http://localhost:3001', 'https://vemre-bg.vercel.app'],
+    origin: ['http://localhost:3001', 'https://vemre-gray.vercel.app'],
     credentials:true,            //access-control-allow-credentials:true
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   }
