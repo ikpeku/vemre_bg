@@ -103,6 +103,7 @@ export const updateUserPlan = async (req: IRequest, res: Response, next: NextFun
       type: "Withdraw",
       transactionLink: txnlink,
       isPending: false,
+      isVemreCharge: true,
       recipientName: "Vemre Subscription Duty",
       senderEmail: "",
       senderPhoneNumber: ""

@@ -7,6 +7,7 @@ interface ITransactionSchema {
   user: Types.ObjectId,
   type?: "Received" | "Withdraw";
   isPending: boolean,
+  isVemreCharge: boolean, //this is vemre charges
   description?: string;
   transactionReference?: string;
   senderName?: string;
@@ -41,6 +42,10 @@ const TransactionSchema = new Schema<ITransactionSchema>(
       isPending: {
         type: Boolean,
         default: true,
+      },
+      isVemreCharge: {
+        type: Boolean,
+        default: false,
       },
       senderEmail: {
         type: String,
